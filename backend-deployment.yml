@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: bahachairet/backend:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: DB_HOST
+              value: 'localhost'
+            - name: DB_USER
+              value: 'root'
+            - name: DB_PASSWORD
+              value: ''
+            - name: DB_NAME
+              value: 'ai_chat_db'
+            - name: LLM_ENDPOINT
+              value: 'http://127.0.0.1:11434/api/chat'
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+spec:
+  selector:
+    app: backend
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+  type: ClusterIP
